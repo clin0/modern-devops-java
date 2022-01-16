@@ -1,0 +1,35 @@
+name: copilot
+on: push
+jobs:
+  copilot:
+    runs-on: ubuntu-latest
+    environment: test
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Install copilot
+        run: |
+          mkdir -p $GITHUB_WORKSPACE/bin
+          # download copilot
+          curl -Lo copilot-linux https://github.com/aws/copilot-cli/releases/download/v1.8.3/copilot-linux && \
+          # make copilot bin executable
+          chmod +x copilot-linux && \
+          # move to path
+          mv copilot-linux $GITHUB_WORKSPACE/bin/copilot && \
+          # add to PATH
+          echo "$GITHUB_WORKSPACE/bin" >> $GITHUB_PATH
+      - name: run copilot sample
+      - run: copilot help
+      - name: test
+        env: # Or as an environment variable
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID}}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY}}
+          AWS_SESSION_TOKEN: ${{ secrets.AWS_SESSION_TOKEN}}
+          AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION}}
+        run: |
+          copilot init --app demo                      \
+            --name api                                 \
+            --type 'Load Balanced Web Service'         \
+            --dockerfile './Dockerfile'                \
+            --port 8080                                  \
+            --deploy
