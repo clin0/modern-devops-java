@@ -19,7 +19,7 @@ jobs:
           # add to PATH
           echo "$GITHUB_WORKSPACE/bin" >> $GITHUB_PATH
       - name: run copilot sample
-      - run: copilot help
+        run: copilot help
       - name: test
         env: # Or as an environment variable
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID}}
